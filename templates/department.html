@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Department Title -->
+<div class="text-center py-5">
+    <h1 class="text-light">{{ department }}</h1>
+</div>
+
+<!-- Products Grid -->
+<div class="container py-4">
+    <div class="row">
+        <ul class="list-unstyled w-100">
+            {% for product in products %}
+            <li class="mb-4">
+                <div class="row bg-dark text-light rounded shadow">
+                    <!-- Product Image -->
+                    <div class="col-md-4 d-flex align-items-center justify-content-center p-3">
+                        <img src="{{ url_for('static', filename=product.image_url) }}" class="img-fluid" alt="{{ product.description }}" style="max-height: 250px; border-radius: 10px;">
+                    </div>
+
+                    <!-- Product Details -->
+                    <div class="col-md-8 p-4">
+                        <h3>{{ product.description }}</h3>
+                        <p class="mb-1"><strong>Brand:</strong> {{ product.brand }}</p>
+                        <p class="mb-1"><strong>Price:</strong> ${{ product.price }}</p>
+                        <p class="mb-1"><strong>In Stock:</strong> {{ inventory[loop.index0] }}</p>
+                        <!-- Add to Cart Section -->
+                        {% if current_user.client %}
+                        <div class="row mt-3">
+                            <div class="col-6 ms-auto">
+                                <form action="{{ url_for('add_to_cart', department=department, product_id=product.product_id) }}" method="POST" class="d-flex justify-content-between align-items-center">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <!-- Quantity Label -->
+                                    <label for="quantity_{{ product.product_id }}" class="me-2">Quantity:</label>
+                                    
+                                    <!-- Quantity Input with Built-in Up/Down Arrows -->
+                                    <input type="number" name="quantity" id="quantity_{{ product.product_id }}" 
+                                           class="form-control text-center"
+                                           value="1" min="0" max="{{ inventory[loop.index0] }}" 
+                                           style="width: 80px;">
+                                    
+                                    <!-- Hidden Input for Product ID -->
+                                    <input type="hidden" name="product_id" value="{{ product.product_id }}">
+
+                                    <!-- Add to Cart Button -->
+                                    <button type="submit" class="btn btn-success">Add to Cart</button>
+                                </form>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+{% endblock %}

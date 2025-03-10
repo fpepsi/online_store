@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Rock Tools</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body { background-color: navy; }
+        .brand-label {
+            font-family: 'Rock Salt', cursive;
+            font-size: 36px;
+            font-weight: bold;
+            font-style: italic;
+            color: white;
+            -webkit-text-stroke: 1px black; /* Black text contour */
+        }
+        .moto-label {
+            font-family: 'Rock Salt', cursive;
+            font-size: 18px;
+            color: white;
+        }
+        .footer { 
+            background: black; 
+            color: white; 
+            padding: 15px 0; 
+        }
+        .navbar-nav .dropdown:hover .dropdown-menu {
+            display: block;
+            margin-top: 0;
+        }
+        .dropdown-menu {
+            margin-top: 0;
+        }
+        .navbar-nav .dropdown-toggle::after {
+            display: none !important;
+        }
+        .dropdown-menu .dropdown-item:hover {
+            color: navy !important;
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Rock+Salt&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- Header -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-black">
+    <div class="container">
+        <a class="navbar-brand" href="#"><img src="/static/logo.png" alt="Logo" height="100"></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('home')}}">Home</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="departmentsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Departments
+                    </a>
+                    <ul class="dropdown-menu bg-dark" aria-labelledby="departmentsDropdown">
+                        {% for department in departments %}
+                        <li>
+                            <a class="dropdown-item text-white" href="{{ url_for('department_page', department=department.name) }}">
+                                {{ department.name }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </li>            
+                {% if current_user.employee %}
+                <li class="nav-item"><a class="nav-link text-white" href="#">Orders</a></li>
+                {% endif %}
+                {% if current_user.client %}
+                <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('view_cart') }}">Cart</a></li>
+                {% endif %}
+            </ul>
+            <ul class="navbar-nav">
+                {% if current_user.is_authenticated %}
+                <li class="nav-item"><a class="nav-link btn btn-primary text-white" href="{{ url_for('logout')}}">Log Out</a></li>
+                <li class="nav-item"><a class="nav-link btn btn-primary text-white" href="{{ url_for('address') }}">Address</a></li>
+                {% if current_user.employee %}
+                <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('employees')}}">Employees</a></li>
+                {% endif %}
+                {% endif %}
+                {% if not current_user.is_authenticated %}
+                <li class="nav-item"><a class="nav-link btn btn-primary text-white" href="{{ url_for('login')}}">Log In</a></li>
+                <li class="nav-item"><a class="nav-link btn btn-primary text-white ms-2" href="{{ url_for('register')}}">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- 🚀 Page Content -->
+<div class="container-fluid">
+    <!-- Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="container mt-3">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show text-white d-inline-block bg-dark px-2" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+    
+    {% block content %}{% endblock %}
+</div>
+
+<!-- 🚀 Footer -->
+<footer class="footer mt-5">
+    <div class="container d-flex justify-content-between align-items-center">
+        <span><img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" height="50"> © {{ year }}</span>
+        <div>
+            <a href="https://www.facebook.com"><img src="{{ url_for('static', filename='Facebook-f_Logo-Blue-Logo.wine.png') }}" alt="facebook logo" height="50"></a>
+            <a href="https://www.instagram.com"><img src="{{ url_for('static', filename='Instagram-Logo-PNG5.png') }}" alt="instagram logo" height="30"></a>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

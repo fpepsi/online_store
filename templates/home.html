@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Branding Section -->
+<div class="text-center py-5">
+    <h1 class="brand-label">Rock Tools</h1>
+    <p class="moto-label">Your Ultimate Destination for Rock Instruments</p>
+</div>
+
+<!-- Carousel Section -->
+<div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        {% for i in range(4) %}  <!-- 12 images (3 at a time) -->
+        <div class="carousel-item {% if i == 0 %}active{% endif %}">
+            <div class="d-flex justify-content-evenly">
+                <img src="/static/rock_img/img{{ i*3 + 1 }}.jpeg" class="d-block w-30" style="max-height: 300px;">
+                <img src="/static/rock_img/img{{ i*3 + 2 }}.jpeg" class="d-block w-30" style="max-height: 300px;">
+                <img src="/static/rock_img/img{{ i*3 + 3 }}.jpeg" class="d-block w-30" style="max-height: 300px;">
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+</div>
+
+<!-- Product Navigation -->
+<div class="text-center py-5">
+    <h2 class="text-light">Find Your Instrument</h2>
+    <div class="container">
+        <div class="row justify-content-evenly mt-3" style="max-width: 80%; margin: auto;">
+            {% for department in departments %}
+            {% if department.name != "Warehouse" %}
+            <div class="col-md-3 text-center">
+                <a href="{{ url_for('department_page', department=department.name | lower)}}" class="text-light h4">{{department.name}}</a>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

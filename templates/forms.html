@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% from "bootstrap5/form.html" import render_form %} 
+{% block content %} 
+<style>
+  /* Make the background image cover the entire page */
+  body {
+    background-image: url('../static/rock_img/gibson_register.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+  }
+
+  /* Make sections semi-transparent */
+  .masthead, .page-heading, main {
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent dark background */
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  .masthead .page-heading h1, .masthead .page-heading .subheading {
+    text-align: center;
+  }
+
+  main {
+    margin-top: 20px;
+  }
+  /* Ensure the left column (buttons) matches the height of the right column */
+  .button-column {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-around !important;
+    align-items: stretch !important;
+    min-height: 100% !important; /* Ensure it expands properly */
+    height: auto; /* Allow it to adjust dynamically */
+  }
+
+  /* Make sure the row stretches its children */
+  .row {
+      align-items: stretch !important; /* Ensures all columns take full height */
+  }
+
+  /* General Button Styling */
+  .custom-btn {
+      background-color: rgba(0, 0, 0, 0.5) !important;  /* Semi-transparent dark background */
+      color: white !important;
+      border: 2px solid rgba(255, 255, 255, 0.8) !important;
+      padding: 12px !important;
+      font-size: 16px !important;
+      font-weight: bold !important;
+      width: 100% !important;
+      border-radius: 8px !important;
+      transition: all 0.3s ease-in-out !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  }
+
+  /* Hover Effect for Submit Button */
+  .custom-btn:hover {
+      background-color: rgba(50, 50, 50, 0.9) !important; /* Darker background on hover */
+      color: #ffffff !important;
+      border-color: white !important;
+  }
+
+  /* Delete Button - Red Theme */
+  .delete-btn {
+      background-color: rgba(255, 0, 0, 0.5) !important; /* Semi-transparent red */
+      border-color: rgba(255, 255, 255, 0.8) !important;
+  }
+
+  /* Hover Effect for Delete Button */
+  .delete-btn:hover {
+      background-color: rgba(255, 0, 0, 0.8) !important; /* Brighter red */
+      color: white !important;
+  }
+
+  /* Cancel Button - Green Theme */
+  .cancel-btn {
+      background-color: rgba(0, 255, 0, 0.5) !important; /* Semi-transparent green */
+      border-color: rgba(255, 255, 255, 0.8) !important;
+  }
+
+  /* Hover Effect for Cancel Button */
+  .cancel-btn:hover {
+      background-color: rgba(0, 255, 0, 0.8) !important; /* Brighter green */
+      color: white !important;
+  }
+
+
+</style>
+<!-- Page Header -->
+<header class="masthead">
+  <div class="container position-relative px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+      <div class="col-md-10 col-lg-8 col-xl-7">
+        <div class="page-heading">
+          <h1 class="text-white">{{ title }}</h1>
+          <span class="subheading text-white">{{ greeting }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="mb-4">
+  <div class="container">
+    <div class="row">
+      <!-- Left Column: Buttons -->
+      <div class="col-md-3 button-column">
+        {% if record_id %}
+        <button type="submit" form="update-form" name="action" value="update" class="btn custom-btn">Submit Changes</button>
+        <form action="{% if current_user.employee %}{{ url_for('update_record', table=table, record_id=record_id) }}{% elif current_user.client %}{{ url_for('home') }}{% endif %}" method="post" class="w-100">
+            <input type="hidden" name="action" value="delete">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn custom-btn delete-btn">Delete Record</button>
+        </form>
+        {%  endif %}
+        {% if not record_id %}
+        <button type="submit" form="update-form" name="action" value="add" class="btn custom-btn">Add Record</button>
+        {%  endif %}
+        <form action="{% if current_user.employee %}{{ url_for('employees', table=table) }}{% elif current_user.client %}{{ url_for('home') }}{% endif %}" method="get" class="w-100">
+          {% if table is not none and table != "None" %}
+            <input type="hidden" name="table" value="{{ table }}">
+          {% endif %}
+          <input type="hidden" name="action" value="cancel">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn custom-btn cancel-btn">Cancel</button>
+        </form>
+      </div>
+
+      <!-- Right Column: Form -->
+      <div class="col-md-8 mx-auto">
+        <form id="update-form" method="POST">
+          {{ form.hidden_tag() }}
+          {{ render_form(form, novalidate=True) }}
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+
+    
+{% endblock %}
+    
